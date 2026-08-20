@@ -32,13 +32,13 @@ Resposta:
 }
 ```
 
-O campo opcional `data` deve estar no formato `YYYY-MM-DD` e ser anterior ao dia atual. Quando informado, a API busca o fechamento do dolar naquela data; sem ele, usa a cotacao atual. O campo `consultadoEm` informa o horario em que a conversao foi realizada. Em caso de indisponibilidade da cotacao, a API retorna HTTP 502.
+O campo opcional `data` deve estar no formato `YYYY-MM-DD` e ser anterior ao dia atual. Quando informado, a API busca o fechamento das moedas naquela data; sem ele, usa a cotacao atual. O campo `consultadoEm` informa o horario em que a conversao foi realizada. Em caso de indisponibilidade da cotacao, a API retorna HTTP 502.
 
 As moedas devem ser informadas em `moedaOrigem` e `moedaDestino`. A cotacao de cada moeda em relacao ao real permite calcular qualquer direcao.
 
 As moedas disponiveis sao `BRL`, `USD`, `EUR` e `GBP`, tanto como origem quanto como destino. Para moedas diferentes de BRL, a API consulta os pares `MOEDA-BRL` e calcula a conversao cruzada.
 
-Para converter dolares em reais, inverta as moedas no request:
+Exemplo de conversao entre duas moedas diferentes:
 
 ```json
 {

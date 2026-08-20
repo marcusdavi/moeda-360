@@ -209,7 +209,7 @@ function App() {
           </section>
         )}
       </section>
-      <footer>Dados consultados pela AwesomeAPI <span>•</span> USD / BRL</footer>
+      <footer>Dados consultados pela AwesomeAPI <span>•</span> BRL, USD, EUR e GBP</footer>
     </main>
   )
 }

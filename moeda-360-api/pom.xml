@@ -15,7 +15,7 @@
     <artifactId>conversor-moeda</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>conversor-moeda</name>
-    <description>API para conversao de reais em dolares</description>
+    <description>API para conversao entre moedas</description>
 
     <properties>
         <java.version>21</java.version>
