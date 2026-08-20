@@ -1,0 +1,10 @@
+# Java / Maven
+moeda-360-api/target/
+
+# Node / Vite
+moeda-360-web/node_modules/
+moeda-360-web/dist/
+
+# Local environment
+.env
+*.local
