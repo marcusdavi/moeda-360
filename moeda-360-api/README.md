@@ -1,6 +1,6 @@
 # Conversor de moedas
 
-API Spring Boot que converte valores entre reais e dolares usando a cotacao `USD-BRL` consultada em tempo real na AwesomeAPI.
+API Spring Boot que converte valores entre reais e dolares, nos dois sentidos, usando a cotacao `USD-BRL` consultada em tempo real na AwesomeAPI.
 
 ## Executar
 
@@ -33,6 +33,8 @@ Resposta:
 ```
 
 O campo opcional `data` deve estar no formato `YYYY-MM-DD` e ser anterior ao dia atual. Quando informado, a API busca o fechamento do dolar naquela data; sem ele, usa a cotacao atual. O campo `consultadoEm` informa o horario em que a conversao foi realizada. Em caso de indisponibilidade da cotacao, a API retorna HTTP 502.
+
+As moedas devem ser informadas em `moedaOrigem` e `moedaDestino`, usando `BRL` ou `USD`. A mesma cotacao `USD-BRL` permite calcular os dois sentidos.
 
 Para converter dolares em reais, inverta as moedas no request:
 

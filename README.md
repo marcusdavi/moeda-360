@@ -1,6 +1,6 @@
 # moeda-360
 
-Conversor de moedas que consulta a cotação USD/BRL em tempo real e converte valores em reais para dólares.
+Conversor de moedas que consulta a cotação USD/BRL em tempo real e converte valores entre reais e dólares.
 
 ## Sobre este projeto
 
@@ -43,6 +43,7 @@ Durante o desenvolvimento, o Vite encaminha as requisições `/api` para o backe
 ## Funcionalidades
 
 - Conversão de BRL para USD e de USD para BRL
+- Seleção da moeda de origem e da moeda de destino na interface
 - Consulta da cotação atual
 - Consulta de cotação histórica por data
 - Formatação de valores no padrão brasileiro
