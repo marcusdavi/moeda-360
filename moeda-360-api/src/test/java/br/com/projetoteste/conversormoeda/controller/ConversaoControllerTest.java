@@ -1,6 +1,7 @@
 package br.com.projetoteste.conversormoeda.controller;
 
 import br.com.projetoteste.conversormoeda.dto.ConversaoResponse;
+import br.com.projetoteste.conversormoeda.dto.Moeda;
 import br.com.projetoteste.conversormoeda.service.ConversaoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,35 +31,35 @@ class ConversaoControllerTest {
 
     @Test
     void deveConverterValorEmReais() throws Exception {
-        when(conversaoService.converter(any(), any())).thenReturn(new ConversaoResponse(
-                new BigDecimal("100.00"), new BigDecimal("5.00"),
-            new BigDecimal("20.00"), null, OffsetDateTime.now()));
+        when(conversaoService.converter(any(), any(), any(), any())).thenReturn(new ConversaoResponse(
+            new BigDecimal("100.00"), Moeda.BRL, new BigDecimal("5.00"),
+            new BigDecimal("20.00"), Moeda.USD, null, OffsetDateTime.now()));
 
         mockMvc.perform(post("/api/conversoes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"valorEmReais\":100}"))
+                        .content("{\"valor\":100,\"moedaOrigem\":\"BRL\",\"moedaDestino\":\"USD\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.valorEmDolares").value(20.0));
+                    .andExpect(jsonPath("$.valorConvertido").value(20.0));
     }
 
     @Test
     void deveRejeitarValorInvalido() throws Exception {
         mockMvc.perform(post("/api/conversoes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"valorEmReais\":0}"))
+                        .content("{\"valor\":0,\"moedaOrigem\":\"BRL\",\"moedaDestino\":\"USD\"}"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void deveAceitarDataAnteriorAoDiaAtual() throws Exception {
         LocalDate data = LocalDate.now().minusDays(1);
-        when(conversaoService.converter(any(), any())).thenReturn(new ConversaoResponse(
-                new BigDecimal("100.00"), new BigDecimal("5.00"),
-                new BigDecimal("20.00"), data, OffsetDateTime.now()));
+        when(conversaoService.converter(any(), any(), any(), any())).thenReturn(new ConversaoResponse(
+            new BigDecimal("100.00"), Moeda.BRL, new BigDecimal("5.00"),
+            new BigDecimal("20.00"), Moeda.USD, data, OffsetDateTime.now()));
 
         mockMvc.perform(post("/api/conversoes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"valorEmReais\":100,\"data\":\"" + data + "\"}"))
+                        .content("{\"valor\":100,\"moedaOrigem\":\"BRL\",\"moedaDestino\":\"USD\",\"data\":\"" + data + "\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dataCotacao").value(data.toString()));
     }
@@ -67,7 +68,7 @@ class ConversaoControllerTest {
     void deveRejeitarDataAtual() throws Exception {
         mockMvc.perform(post("/api/conversoes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"valorEmReais\":100,\"data\":\"" + LocalDate.now() + "\"}"))
+                        .content("{\"valor\":100,\"moedaOrigem\":\"BRL\",\"moedaDestino\":\"USD\",\"data\":\"" + LocalDate.now() + "\"}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -75,7 +76,22 @@ class ConversaoControllerTest {
     void deveRejeitarDataForaDoFormatoIso() throws Exception {
         mockMvc.perform(post("/api/conversoes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"valorEmReais\":100,\"data\":\"2026-8-19\"}"))
+                        .content("{\"valor\":100,\"moedaOrigem\":\"BRL\",\"moedaDestino\":\"USD\",\"data\":\"2026-8-19\"}"))
                 .andExpect(status().isBadRequest());
     }
+
+                @Test
+                void deveConverterDolaresParaReais() throws Exception {
+                when(conversaoService.converter(any(), any(), any(), any())).thenReturn(new ConversaoResponse(
+                    new BigDecimal("20.00"), Moeda.USD, new BigDecimal("5.00"),
+                    new BigDecimal("100.00"), Moeda.BRL, null, OffsetDateTime.now()));
+
+                mockMvc.perform(post("/api/conversoes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"valor\":20,\"moedaOrigem\":\"USD\",\"moedaDestino\":\"BRL\"}"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.valorConvertido").value(100.0))
+                    .andExpect(jsonPath("$.moedaOrigem").value("USD"))
+                    .andExpect(jsonPath("$.moedaDestino").value("BRL"));
+                }
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowDown, ArrowRight, CalendarDays, Check, CircleDollarSign, LoaderCircle, RefreshCw, Sparkles } from 'lucide-react'
+import { ArrowDown, ArrowLeftRight, ArrowRight, CalendarDays, Check, CircleDollarSign, LoaderCircle, RefreshCw, Sparkles } from 'lucide-react'
 
 const apiUrl = import.meta.env.VITE_API_URL || ''
 const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
@@ -15,6 +15,8 @@ const formatInputCurrency = (value) => {
 
 const parseInputCurrency = (value) => Number(value.replace(/\./g, '').replace(',', '.'))
 
+const currencySymbol = (currency) => currency === 'BRL' ? 'R$' : 'US$'
+
 const formatDate = (value) => {
   if (!value) return 'Cotação atual'
   return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' }).format(new Date(`${value}T12:00:00`))
@@ -27,11 +29,20 @@ const formatTime = (value) => {
 
 function App() {
   const [amount, setAmount] = useState('100,00')
+  const [currencyFrom, setCurrencyFrom] = useState('BRL')
+  const [currencyTo, setCurrencyTo] = useState('USD')
   const [date, setDate] = useState('')
   const [result, setResult] = useState(null)
   const [history, setHistory] = useState([])
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  function handleSwap() {
+    setCurrencyFrom(currencyTo)
+    setCurrencyTo(currencyFrom)
+    setResult(null)
+    setError('')
+  }
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -42,13 +53,18 @@ function App() {
     try {
       const parsedAmount = parseInputCurrency(amount)
       if (!Number.isFinite(parsedAmount) || parsedAmount < 0.01) {
-        throw new Error('Informe um valor maior que R$ 0,01.')
+        throw new Error('Informe um valor maior que 0,01.')
       }
 
       const response = await fetch(`${apiUrl}/api/conversoes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ valorEmReais: parsedAmount, ...(date ? { data: date } : {}) }),
+        body: JSON.stringify({
+          valor: parsedAmount,
+          moedaOrigem: currencyFrom,
+          moedaDestino: currencyTo,
+          ...(date ? { data: date } : {}),
+        }),
       })
       const body = await response.json().catch(() => null)
       if (!response.ok) throw new Error(body?.detail || body?.message || 'Não foi possível consultar a cotação.')
@@ -75,7 +91,7 @@ function App() {
         <div className="hero-copy">
           <p className="eyebrow"><Sparkles size={15} /> Clareza para suas decisões</p>
           <h1>Seu dinheiro,<br /><em>em outra moeda.</em></h1>
-          <p className="intro">Descubra quanto seus reais valem em dólares com a cotação mais recente ou consulte um dia específico.</p>
+          <p className="intro">Converta entre reais e dólares com a cotação mais recente ou consulte um dia específico.</p>
         </div>
 
         <div className="conversion-layout">
@@ -85,12 +101,18 @@ function App() {
                 <span className="section-label">Conversão</span>
                 <h2>Quanto você quer converter?</h2>
               </div>
-              <div className="pair-badge">BRL <ArrowRight size={14} /> USD</div>
+              <div className="pair-badge">
+                <span>{currencyFrom}</span>
+                <button className="swap-button" type="button" onClick={handleSwap} aria-label="Inverter moedas" title="Inverter moedas">
+                  <ArrowLeftRight size={14} />
+                </button>
+                <span>{currencyTo}</span>
+              </div>
             </div>
 
-            <label className="field-label" htmlFor="amount">Valor em reais</label>
+            <label className="field-label" htmlFor="amount">Valor em {currencyFrom === 'BRL' ? 'reais' : 'dólares'}</label>
             <div className="amount-field">
-              <span>R$</span>
+              <span>{currencySymbol(currencyFrom)}</span>
               <input
                 id="amount"
                 type="text"
@@ -124,17 +146,17 @@ function App() {
               <div className="empty-result">
                 <div className="empty-icon"><ArrowDown size={22} /></div>
                 <span className="section-label">Seu resultado aparece aqui</span>
-                <p>Faça uma conversão para ver o valor em dólares, a cotação usada e o momento da consulta.</p>
+                <p>Faça uma conversão para ver o valor final, a cotação usada e o momento da consulta.</p>
               </div>
             ) : (
               <div className="result-content">
                 <div className="result-topline"><span className="success-icon"><Check size={15} /></span> Conversão concluída</div>
                 <span className="section-label">Você recebe</span>
-                <strong className="converted-value">{formatCurrency(result.valorEmDolares, 'USD')}</strong>
+                <strong className="converted-value">{formatCurrency(result.valorConvertido, result.moedaDestino)}</strong>
                 <div className="result-divider" />
-                <div className="summary-line"><span>{formatCurrency(result.valorEmReais, 'BRL')}</span><ArrowRight size={16} /><span>{formatCurrency(result.valorEmDolares, 'USD')}</span></div>
+                <div className="summary-line"><span>{formatCurrency(result.valorOriginal, result.moedaOrigem)}</span><ArrowRight size={16} /><span>{formatCurrency(result.valorConvertido, result.moedaDestino)}</span></div>
                 <dl className="details">
-                  <div><dt>Cotação do dólar</dt><dd>{formatCurrency(result.cotacaoDolar, 'BRL')}</dd></div>
+                  <div><dt>1 USD equivale a</dt><dd>{formatCurrency(result.cotacaoDolar, 'BRL')}</dd></div>
                   <div><dt>Data da cotação</dt><dd>{formatDate(result.dataCotacao)}</dd></div>
                   <div><dt>Consultado em</dt><dd>{formatTime(result.consultadoEm)}</dd></div>
                 </dl>
@@ -161,9 +183,9 @@ function App() {
                     <small>{formatTime(conversion.consultadoEm)}</small>
                   </div>
                   <div className="history-values">
-                    <strong>{formatCurrency(conversion.valorEmReais, 'BRL')}</strong>
+                    <strong>{formatCurrency(conversion.valorOriginal, conversion.moedaOrigem)}</strong>
                     <ArrowRight size={15} />
-                    <strong>{formatCurrency(conversion.valorEmDolares, 'USD')}</strong>
+                    <strong>{formatCurrency(conversion.valorConvertido, conversion.moedaDestino)}</strong>
                   </div>
                   <span className="history-rate">1 USD = {formatCurrency(conversion.cotacaoDolar, 'BRL')}</span>
                 </article>

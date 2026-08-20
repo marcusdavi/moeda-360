@@ -3,6 +3,7 @@ package br.com.projetoteste.conversormoeda.dto;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.AssertTrue;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
@@ -11,9 +12,18 @@ import java.time.LocalDate;
 public record ConversaoRequest(
         @NotNull(message = "valorEmReais e obrigatorio")
         @DecimalMin(value = "0.01", message = "valorEmReais deve ser maior que zero")
-        BigDecimal valorEmReais,
+                BigDecimal valor,
+                @NotNull(message = "moedaOrigem e obrigatoria")
+                Moeda moedaOrigem,
+                @NotNull(message = "moedaDestino e obrigatoria")
+                Moeda moedaDestino,
         @JsonFormat(pattern = "yyyy-MM-dd")
         @Past(message = "data deve ser anterior ao dia atual")
         LocalDate data
 ) {
+
+        @AssertTrue(message = "moedaOrigem e moedaDestino devem ser diferentes")
+        public boolean moedasDiferentes() {
+                return moedaOrigem == null || moedaDestino == null || moedaOrigem != moedaDestino;
+        }
 }

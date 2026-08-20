@@ -1,6 +1,7 @@
 package br.com.projetoteste.conversormoeda.service;
 
 import br.com.projetoteste.conversormoeda.dto.ConversaoResponse;
+import br.com.projetoteste.conversormoeda.dto.Moeda;
 import br.com.projetoteste.conversormoeda.integration.AwesomeApiClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,10 +31,22 @@ class ConversaoServiceTest {
         LocalDate data = LocalDate.of(2020, 1, 2);
         when(awesomeApiClient.buscarCotacaoDolar(data)).thenReturn(new BigDecimal("4.025"));
 
-        ConversaoResponse primeiraResposta = conversaoService.converter(new BigDecimal("100.00"), data);
-        ConversaoResponse segundaResposta = conversaoService.converter(new BigDecimal("100.0"), data);
+        ConversaoResponse primeiraResposta = conversaoService.converter(new BigDecimal("100.00"), Moeda.BRL, Moeda.USD, data);
+        ConversaoResponse segundaResposta = conversaoService.converter(new BigDecimal("100.0"), Moeda.BRL, Moeda.USD, data);
 
         assertEquals(primeiraResposta, segundaResposta);
         verify(awesomeApiClient, times(1)).buscarCotacaoDolar(data);
+    }
+
+    @Test
+    void deveConverterDolaresParaReais() {
+        when(awesomeApiClient.buscarCotacaoDolar()).thenReturn(new BigDecimal("5.00"));
+
+        ConversaoResponse resposta = conversaoService.converter(
+                new BigDecimal("20.00"), Moeda.USD, Moeda.BRL, null);
+
+        assertEquals(new BigDecimal("100.00"), resposta.valorConvertido());
+        assertEquals(Moeda.USD, resposta.moedaOrigem());
+        assertEquals(Moeda.BRL, resposta.moedaDestino());
     }
 }

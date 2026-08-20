@@ -22,6 +22,7 @@ public class ConversaoController {
 
     @PostMapping
     public ResponseEntity<ConversaoResponse> converter(@Valid @RequestBody ConversaoRequest request) {
-        return ResponseEntity.ok(conversaoService.converter(request.valorEmReais(), request.data()));
+        return ResponseEntity.ok(conversaoService.converter(
+                request.valor(), request.moedaOrigem(), request.moedaDestino(), request.data()));
     }
 }

@@ -25,6 +25,8 @@ h1 em { color: #b55435; font-family: 'Playfair Display', serif; font-weight: 600
 .card-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
 .card-heading h2 { max-width: 300px; margin: 7px 0 0; font-size: 19px; line-height: 1.2; letter-spacing: -.6px; }
 .pair-badge { display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px; color: #67675d; background: #f1ede4; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 11px; }
+.swap-button { display: grid; place-items: center; padding: 2px; border: 0; color: #b55435; background: transparent; }
+.swap-button:hover { color: #963e27; }
 .field-label { display: block; margin-bottom: 9px; color: #67675d; font-size: 12px; font-weight: 700; }
 .field-label span { color: #96968d; font-weight: 500; }
 .amount-field, .date-field { display: flex; align-items: center; border-bottom: 1px solid #cfc9bc; transition: border-color .2s; }

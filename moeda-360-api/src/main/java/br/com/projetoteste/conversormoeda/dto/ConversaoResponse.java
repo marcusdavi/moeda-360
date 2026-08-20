@@ -5,9 +5,11 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 public record ConversaoResponse(
-        BigDecimal valorEmReais,
+        BigDecimal valorOriginal,
+        Moeda moedaOrigem,
         BigDecimal cotacaoDolar,
-        BigDecimal valorEmDolares,
+        BigDecimal valorConvertido,
+        Moeda moedaDestino,
         LocalDate dataCotacao,
         OffsetDateTime consultadoEm
 ) {

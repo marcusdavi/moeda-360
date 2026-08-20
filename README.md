@@ -42,7 +42,7 @@ Durante o desenvolvimento, o Vite encaminha as requisições `/api` para o backe
 
 ## Funcionalidades
 
-- Conversão de BRL para USD
+- Conversão de BRL para USD e de USD para BRL
 - Consulta da cotação atual
 - Consulta de cotação histórica por data
 - Formatação de valores no padrão brasileiro
@@ -60,7 +60,9 @@ Exemplo de requisição:
 
 ```json
 {
-  "valorEmReais": 100,
+  "valor": 100,
+  "moedaOrigem": "BRL",
+  "moedaDestino": "USD",
   "data": "2026-08-19"
 }
 ```

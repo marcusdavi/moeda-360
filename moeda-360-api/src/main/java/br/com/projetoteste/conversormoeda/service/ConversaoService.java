@@ -1,6 +1,7 @@
 package br.com.projetoteste.conversormoeda.service;
 
 import br.com.projetoteste.conversormoeda.dto.ConversaoResponse;
+import br.com.projetoteste.conversormoeda.dto.Moeda;
 import br.com.projetoteste.conversormoeda.integration.AwesomeApiClient;
 import org.springframework.stereotype.Service;
 
@@ -21,33 +22,38 @@ public class ConversaoService {
         this.awesomeApiClient = awesomeApiClient;
     }
 
-    public ConversaoResponse converter(BigDecimal valorEmReais, LocalDate data) {
+    public ConversaoResponse converter(BigDecimal valor, Moeda moedaOrigem, Moeda moedaDestino, LocalDate data) {
         if (data != null) {
-            ConversaoCacheKey cacheKey = new ConversaoCacheKey(valorEmReais, data);
-            return conversoesHistoricas.computeIfAbsent(cacheKey, key -> criarConversao(key.valorEmReais(), data));
+            ConversaoCacheKey cacheKey = new ConversaoCacheKey(valor, moedaOrigem, moedaDestino, data);
+            return conversoesHistoricas.computeIfAbsent(cacheKey,
+                    key -> criarConversao(key.valor(), key.moedaOrigem(), key.moedaDestino(), data));
         }
-        return criarConversao(valorEmReais, null);
+        return criarConversao(valor, moedaOrigem, moedaDestino, null);
     }
 
-    private ConversaoResponse criarConversao(BigDecimal valorEmReais, LocalDate data) {
+    private ConversaoResponse criarConversao(BigDecimal valor, Moeda moedaOrigem, Moeda moedaDestino, LocalDate data) {
         BigDecimal cotacaoDolar = data == null
                 ? awesomeApiClient.buscarCotacaoDolar()
                 : awesomeApiClient.buscarCotacaoDolar(data);
-        BigDecimal valorEmDolares = valorEmReais.divide(cotacaoDolar, 2, RoundingMode.HALF_UP);
+        BigDecimal valorConvertido = moedaOrigem == Moeda.BRL
+                ? valor.divide(cotacaoDolar, 2, RoundingMode.HALF_UP)
+                : valor.multiply(cotacaoDolar).setScale(2, RoundingMode.HALF_UP);
 
         return new ConversaoResponse(
-                valorEmReais.setScale(2, RoundingMode.HALF_UP),
+                valor.setScale(2, RoundingMode.HALF_UP),
+                moedaOrigem,
                 cotacaoDolar.setScale(4, RoundingMode.HALF_UP),
-                valorEmDolares,
+                valorConvertido,
+                moedaDestino,
                 data,
                 OffsetDateTime.now()
         );
     }
 
-    private record ConversaoCacheKey(BigDecimal valorEmReais, LocalDate data) {
+    private record ConversaoCacheKey(BigDecimal valor, Moeda moedaOrigem, Moeda moedaDestino, LocalDate data) {
 
         private ConversaoCacheKey {
-            valorEmReais = valorEmReais.stripTrailingZeros();
+            valor = valor.stripTrailingZeros();
         }
     }
 }
