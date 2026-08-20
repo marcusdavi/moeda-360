@@ -1,16 +1,17 @@
 package br.com.projetoteste.conversormoeda.integration;
 
-import br.com.projetoteste.conversormoeda.dto.Moeda;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientException;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
+
+import br.com.projetoteste.conversormoeda.dto.Moeda;
 
 @Component
 public class AwesomeApiClient {

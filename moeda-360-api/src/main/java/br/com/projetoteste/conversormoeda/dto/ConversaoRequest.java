@@ -1,13 +1,14 @@
 package br.com.projetoteste.conversormoeda.dto;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.AssertTrue;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 public record ConversaoRequest(
         @NotNull(message = "valorEmReais e obrigatorio")
