@@ -1,5 +1,6 @@
 package br.com.projetoteste.conversormoeda.integration;
 
+import br.com.projetoteste.conversormoeda.dto.Moeda;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -20,27 +21,36 @@ public class AwesomeApiClient {
         this.restClient = RestClient.builder().baseUrl(apiUrl).build();
     }
 
-    public BigDecimal buscarCotacaoDolar() {
+    public BigDecimal buscarCotacao(Moeda moeda) {
+        if (moeda == Moeda.BRL) {
+            return BigDecimal.ONE;
+        }
         try {
+            String par = moeda + "-BRL";
             Map<String, CotacaoResponse> response = restClient.get()
-                    .uri("/last/USD-BRL")
+                    .uri("/last/" + par)
                     .retrieve()
                     .body(new org.springframework.core.ParameterizedTypeReference<>() {});
 
-            if (response == null || response.get("USDBRL") == null || response.get("USDBRL").bid() == null) {
+            String chave = moeda + "BRL";
+            if (response == null || response.get(chave) == null || response.get(chave).bid() == null) {
                 throw new CotacaoIndisponivelException();
             }
-            return new BigDecimal(response.get("USDBRL").bid());
+            return new BigDecimal(response.get(chave).bid());
         } catch (RestClientException | NumberFormatException exception) {
             throw new CotacaoIndisponivelException();
         }
     }
 
-    public BigDecimal buscarCotacaoDolar(LocalDate data) {
+    public BigDecimal buscarCotacao(Moeda moeda, LocalDate data) {
+        if (moeda == Moeda.BRL) {
+            return BigDecimal.ONE;
+        }
         try {
+            String par = moeda + "-BRL";
             List<CotacaoResponse> response = restClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/daily/USD-BRL/1")
+                            .path("/daily/" + par + "/1")
                             .queryParam("start_date", data.format(DateTimeFormatter.BASIC_ISO_DATE))
                             .queryParam("end_date", data.format(DateTimeFormatter.BASIC_ISO_DATE))
                             .build())

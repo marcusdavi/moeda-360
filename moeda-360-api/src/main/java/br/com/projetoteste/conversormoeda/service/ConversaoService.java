@@ -32,17 +32,20 @@ public class ConversaoService {
     }
 
     private ConversaoResponse criarConversao(BigDecimal valor, Moeda moedaOrigem, Moeda moedaDestino, LocalDate data) {
-        BigDecimal cotacaoDolar = data == null
-                ? awesomeApiClient.buscarCotacaoDolar()
-                : awesomeApiClient.buscarCotacaoDolar(data);
-        BigDecimal valorConvertido = moedaOrigem == Moeda.BRL
-                ? valor.divide(cotacaoDolar, 2, RoundingMode.HALF_UP)
-                : valor.multiply(cotacaoDolar).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal cotacaoOrigem = data == null
+            ? awesomeApiClient.buscarCotacao(moedaOrigem)
+            : awesomeApiClient.buscarCotacao(moedaOrigem, data);
+        BigDecimal cotacaoDestino = data == null
+            ? awesomeApiClient.buscarCotacao(moedaDestino)
+            : awesomeApiClient.buscarCotacao(moedaDestino, data);
+        BigDecimal valorConvertido = valor.multiply(cotacaoOrigem)
+            .divide(cotacaoDestino, 2, RoundingMode.HALF_UP);
+        BigDecimal cotacaoBrl = moedaDestino == Moeda.BRL ? cotacaoOrigem : cotacaoDestino;
 
         return new ConversaoResponse(
                 valor.setScale(2, RoundingMode.HALF_UP),
                 moedaOrigem,
-                cotacaoDolar.setScale(4, RoundingMode.HALF_UP),
+                cotacaoBrl.setScale(4, RoundingMode.HALF_UP),
                 valorConvertido,
                 moedaDestino,
                 data,

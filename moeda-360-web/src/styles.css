@@ -25,6 +25,8 @@ h1 em { color: #b55435; font-family: 'Playfair Display', serif; font-weight: 600
 .card-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
 .card-heading h2 { max-width: 300px; margin: 7px 0 0; font-size: 19px; line-height: 1.2; letter-spacing: -.6px; }
 .pair-badge { display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px; color: #67675d; background: #f1ede4; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 11px; }
+.currency-selectors { display: inline-flex; align-items: center; gap: 6px; padding: 5px 7px; color: #67675d; background: #f1ede4; border-radius: 4px; }
+.currency-selectors select { border: 0; outline: 0; color: #25251f; background: transparent; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; cursor: pointer; }
 .swap-button { display: grid; place-items: center; padding: 2px; border: 0; color: #b55435; background: transparent; }
 .swap-button:hover { color: #963e27; }
 .field-label { display: block; margin-bottom: 9px; color: #67675d; font-size: 12px; font-weight: 700; }
@@ -79,4 +81,4 @@ footer span { margin: 0 8px; color: #b55435; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 900px) { .history-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 720px) { .topbar { padding: 20px 20px; } .live-status { font-size: 9px; } .hero { padding: 46px 20px 20px; } h1 { letter-spacing: -2.5px; } h1 em { letter-spacing: -2px; } .intro { max-width: 360px; font-size: 11px; } .conversion-layout { grid-template-columns: 1fr; margin-top: 30px; } .converter-card, .result-panel { min-height: auto; } .converter-card, .result-panel { padding: 22px 20px; } .result-panel { min-height: 285px; } .history-section { margin-top: 25px; } .history-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } footer { padding: 25px 20px; } }
-@media (max-width: 420px) { .live-status { display: none; } .card-heading { display: block; } .pair-badge { margin-top: 15px; } }
+@media (max-width: 420px) { .live-status { display: none; } .card-heading { display: block; } .currency-selectors { margin-top: 15px; } }

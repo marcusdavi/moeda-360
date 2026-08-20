@@ -32,7 +32,7 @@ class ConversaoControllerTest {
     @Test
     void deveConverterValorEmReais() throws Exception {
         when(conversaoService.converter(any(), any(), any(), any())).thenReturn(new ConversaoResponse(
-            new BigDecimal("100.00"), Moeda.BRL, new BigDecimal("5.00"),
+                new BigDecimal("100.00"), Moeda.BRL, new BigDecimal("5.00"),
             new BigDecimal("20.00"), Moeda.USD, null, OffsetDateTime.now()));
 
         mockMvc.perform(post("/api/conversoes")
@@ -51,10 +51,18 @@ class ConversaoControllerTest {
     }
 
     @Test
+    void deveRejeitarMoedasDeOrigemEDestinoIguais() throws Exception {
+        mockMvc.perform(post("/api/conversoes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"valor\":100,\"moedaOrigem\":\"EUR\",\"moedaDestino\":\"EUR\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void deveAceitarDataAnteriorAoDiaAtual() throws Exception {
         LocalDate data = LocalDate.now().minusDays(1);
         when(conversaoService.converter(any(), any(), any(), any())).thenReturn(new ConversaoResponse(
-            new BigDecimal("100.00"), Moeda.BRL, new BigDecimal("5.00"),
+                new BigDecimal("100.00"), Moeda.BRL, new BigDecimal("5.00"),
             new BigDecimal("20.00"), Moeda.USD, data, OffsetDateTime.now()));
 
         mockMvc.perform(post("/api/conversoes")

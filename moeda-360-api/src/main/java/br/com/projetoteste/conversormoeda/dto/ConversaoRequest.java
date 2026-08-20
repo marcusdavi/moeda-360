@@ -23,7 +23,7 @@ public record ConversaoRequest(
 ) {
 
         @AssertTrue(message = "moedaOrigem e moedaDestino devem ser diferentes")
-        public boolean moedasDiferentes() {
+        public boolean isMoedasDiferentes() {
                 return moedaOrigem == null || moedaDestino == null || moedaOrigem != moedaDestino;
         }
 }

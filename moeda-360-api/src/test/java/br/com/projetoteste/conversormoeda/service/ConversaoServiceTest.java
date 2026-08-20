@@ -29,18 +29,20 @@ class ConversaoServiceTest {
     @Test
     void naoDeveBuscarNovamenteParaMesmoValorEDataHistorica() {
         LocalDate data = LocalDate.of(2020, 1, 2);
-        when(awesomeApiClient.buscarCotacaoDolar(data)).thenReturn(new BigDecimal("4.025"));
+        when(awesomeApiClient.buscarCotacao(Moeda.BRL, data)).thenReturn(BigDecimal.ONE);
+        when(awesomeApiClient.buscarCotacao(Moeda.USD, data)).thenReturn(new BigDecimal("4.025"));
 
         ConversaoResponse primeiraResposta = conversaoService.converter(new BigDecimal("100.00"), Moeda.BRL, Moeda.USD, data);
         ConversaoResponse segundaResposta = conversaoService.converter(new BigDecimal("100.0"), Moeda.BRL, Moeda.USD, data);
 
         assertEquals(primeiraResposta, segundaResposta);
-        verify(awesomeApiClient, times(1)).buscarCotacaoDolar(data);
+        verify(awesomeApiClient, times(1)).buscarCotacao(Moeda.USD, data);
     }
 
     @Test
     void deveConverterDolaresParaReais() {
-        when(awesomeApiClient.buscarCotacaoDolar()).thenReturn(new BigDecimal("5.00"));
+        when(awesomeApiClient.buscarCotacao(Moeda.USD)).thenReturn(new BigDecimal("5.00"));
+        when(awesomeApiClient.buscarCotacao(Moeda.BRL)).thenReturn(BigDecimal.ONE);
 
         ConversaoResponse resposta = conversaoService.converter(
                 new BigDecimal("20.00"), Moeda.USD, Moeda.BRL, null);
@@ -48,5 +50,18 @@ class ConversaoServiceTest {
         assertEquals(new BigDecimal("100.00"), resposta.valorConvertido());
         assertEquals(Moeda.USD, resposta.moedaOrigem());
         assertEquals(Moeda.BRL, resposta.moedaDestino());
+    }
+
+    @Test
+    void deveConverterEuroParaLibra() {
+        when(awesomeApiClient.buscarCotacao(Moeda.EUR)).thenReturn(new BigDecimal("6.00"));
+        when(awesomeApiClient.buscarCotacao(Moeda.GBP)).thenReturn(new BigDecimal("7.50"));
+
+        ConversaoResponse resposta = conversaoService.converter(
+                new BigDecimal("10.00"), Moeda.EUR, Moeda.GBP, null);
+
+        assertEquals(new BigDecimal("8.00"), resposta.valorConvertido());
+        assertEquals(Moeda.EUR, resposta.moedaOrigem());
+        assertEquals(Moeda.GBP, resposta.moedaDestino());
     }
 }

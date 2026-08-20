@@ -15,7 +15,15 @@ const formatInputCurrency = (value) => {
 
 const parseInputCurrency = (value) => Number(value.replace(/\./g, '').replace(',', '.'))
 
-const currencySymbol = (currency) => currency === 'BRL' ? 'R$' : 'US$'
+const currencies = [
+  { code: 'BRL', name: 'Real brasileiro', symbol: 'R$' },
+  { code: 'USD', name: 'Dólar americano', symbol: 'US$' },
+  { code: 'EUR', name: 'Euro', symbol: '€' },
+  { code: 'GBP', name: 'Libra esterlina', symbol: '£' },
+]
+
+const currencySymbol = (currency) => currencies.find((item) => item.code === currency)?.symbol || currency
+const currencyName = (currency) => currencies.find((item) => item.code === currency)?.name || currency
 
 const formatDate = (value) => {
   if (!value) return 'Cotação atual'
@@ -55,6 +63,9 @@ function App() {
       if (!Number.isFinite(parsedAmount) || parsedAmount < 0.01) {
         throw new Error('Informe um valor maior que 0,01.')
       }
+      if (currencyFrom === currencyTo) {
+        throw new Error('Escolha moedas de origem e destino diferentes.')
+      }
 
       const response = await fetch(`${apiUrl}/api/conversoes`, {
         method: 'POST',
@@ -91,7 +102,7 @@ function App() {
         <div className="hero-copy">
           <p className="eyebrow"><Sparkles size={15} /> Clareza para suas decisões</p>
           <h1>Seu dinheiro,<br /><em>em outra moeda.</em></h1>
-          <p className="intro">Converta entre reais e dólares com a cotação mais recente ou consulte um dia específico.</p>
+          <p className="intro">Converta entre quatro moedas com a cotação mais recente ou consulte um dia específico.</p>
         </div>
 
         <div className="conversion-layout">
@@ -101,16 +112,20 @@ function App() {
                 <span className="section-label">Conversão</span>
                 <h2>Quanto você quer converter?</h2>
               </div>
-              <div className="pair-badge">
-                <span>{currencyFrom}</span>
+              <div className="currency-selectors">
+                <select value={currencyFrom} onChange={(event) => setCurrencyFrom(event.target.value)} aria-label="Moeda de origem">
+                  {currencies.map((currency) => <option key={currency.code} value={currency.code} disabled={currency.code === currencyTo}>{currency.code}</option>)}
+                </select>
                 <button className="swap-button" type="button" onClick={handleSwap} aria-label="Inverter moedas" title="Inverter moedas">
                   <ArrowLeftRight size={14} />
                 </button>
-                <span>{currencyTo}</span>
+                <select value={currencyTo} onChange={(event) => setCurrencyTo(event.target.value)} aria-label="Moeda de destino">
+                  {currencies.map((currency) => <option key={currency.code} value={currency.code} disabled={currency.code === currencyFrom}>{currency.code}</option>)}
+                </select>
               </div>
             </div>
 
-            <label className="field-label" htmlFor="amount">Valor em {currencyFrom === 'BRL' ? 'reais' : 'dólares'}</label>
+            <label className="field-label" htmlFor="amount">Valor em {currencyName(currencyFrom)}</label>
             <div className="amount-field">
               <span>{currencySymbol(currencyFrom)}</span>
               <input
@@ -156,7 +171,7 @@ function App() {
                 <div className="result-divider" />
                 <div className="summary-line"><span>{formatCurrency(result.valorOriginal, result.moedaOrigem)}</span><ArrowRight size={16} /><span>{formatCurrency(result.valorConvertido, result.moedaDestino)}</span></div>
                 <dl className="details">
-                  <div><dt>1 USD equivale a</dt><dd>{formatCurrency(result.cotacaoDolar, 'BRL')}</dd></div>
+                  <div><dt>Referência em BRL</dt><dd>{formatCurrency(result.cotacaoBrl, 'BRL')}</dd></div>
                   <div><dt>Data da cotação</dt><dd>{formatDate(result.dataCotacao)}</dd></div>
                   <div><dt>Consultado em</dt><dd>{formatTime(result.consultadoEm)}</dd></div>
                 </dl>
@@ -187,7 +202,7 @@ function App() {
                     <ArrowRight size={15} />
                     <strong>{formatCurrency(conversion.valorConvertido, conversion.moedaDestino)}</strong>
                   </div>
-                  <span className="history-rate">1 USD = {formatCurrency(conversion.cotacaoDolar, 'BRL')}</span>
+                  <span className="history-rate">Referência BRL: {formatCurrency(conversion.cotacaoBrl, 'BRL')}</span>
                 </article>
               ))}
             </div>
