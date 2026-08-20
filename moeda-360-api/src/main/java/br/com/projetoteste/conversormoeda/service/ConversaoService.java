@@ -40,12 +40,12 @@ public class ConversaoService {
             : awesomeApiClient.buscarCotacao(moedaDestino, data);
         BigDecimal valorConvertido = valor.multiply(cotacaoOrigem)
             .divide(cotacaoDestino, 2, RoundingMode.HALF_UP);
-        BigDecimal cotacaoBrl = moedaDestino == Moeda.BRL ? cotacaoOrigem : cotacaoDestino;
+        BigDecimal cotacaoConversao = cotacaoOrigem.divide(cotacaoDestino, 6, RoundingMode.HALF_UP);
 
         return new ConversaoResponse(
                 valor.setScale(2, RoundingMode.HALF_UP),
                 moedaOrigem,
-                cotacaoBrl.setScale(4, RoundingMode.HALF_UP),
+                cotacaoConversao,
                 valorConvertido,
                 moedaDestino,
                 data,

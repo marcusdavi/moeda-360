@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 public record ConversaoResponse(
         BigDecimal valorOriginal,
         Moeda moedaOrigem,
-        BigDecimal cotacaoBrl,
+        BigDecimal cotacaoConversao,
         BigDecimal valorConvertido,
         Moeda moedaDestino,
         LocalDate dataCotacao,

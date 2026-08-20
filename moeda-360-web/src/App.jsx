@@ -16,10 +16,10 @@ const formatInputCurrency = (value) => {
 const parseInputCurrency = (value) => Number(value.replace(/\./g, '').replace(',', '.'))
 
 const currencies = [
-  { code: 'BRL', name: 'Real brasileiro', symbol: 'R$' },
-  { code: 'USD', name: 'Dólar americano', symbol: 'US$' },
+  { code: 'BRL', name: 'Real Brasileiro', symbol: 'R$' },
+  { code: 'USD', name: 'Dólar Americano', symbol: 'US$' },
   { code: 'EUR', name: 'Euro', symbol: '€' },
-  { code: 'GBP', name: 'Libra esterlina', symbol: '£' },
+  { code: 'GBP', name: 'Libra Esterlina', symbol: '£' },
 ]
 
 const currencySymbol = (currency) => currencies.find((item) => item.code === currency)?.symbol || currency
@@ -48,6 +48,24 @@ function App() {
   function handleSwap() {
     setCurrencyFrom(currencyTo)
     setCurrencyTo(currencyFrom)
+    setResult(null)
+    setError('')
+  }
+
+  function handleCurrencyFromChange(value) {
+    if (value === currencyTo) {
+      setCurrencyTo(currencyFrom)
+    }
+    setCurrencyFrom(value)
+    setResult(null)
+    setError('')
+  }
+
+  function handleCurrencyToChange(value) {
+    if (value === currencyFrom) {
+      setCurrencyFrom(currencyTo)
+    }
+    setCurrencyTo(value)
     setResult(null)
     setError('')
   }
@@ -113,14 +131,14 @@ function App() {
                 <h2>Quanto você quer converter?</h2>
               </div>
               <div className="currency-selectors">
-                <select value={currencyFrom} onChange={(event) => setCurrencyFrom(event.target.value)} aria-label="Moeda de origem">
-                  {currencies.map((currency) => <option key={currency.code} value={currency.code} disabled={currency.code === currencyTo}>{currency.code}</option>)}
+                <select value={currencyFrom} onChange={(event) => handleCurrencyFromChange(event.target.value)} aria-label="Moeda de origem">
+                  {currencies.map((currency) => <option key={currency.code} value={currency.code}>{currency.name}</option>)}
                 </select>
                 <button className="swap-button" type="button" onClick={handleSwap} aria-label="Inverter moedas" title="Inverter moedas">
                   <ArrowLeftRight size={14} />
                 </button>
-                <select value={currencyTo} onChange={(event) => setCurrencyTo(event.target.value)} aria-label="Moeda de destino">
-                  {currencies.map((currency) => <option key={currency.code} value={currency.code} disabled={currency.code === currencyFrom}>{currency.code}</option>)}
+                <select value={currencyTo} onChange={(event) => handleCurrencyToChange(event.target.value)} aria-label="Moeda de destino">
+                  {currencies.map((currency) => <option key={currency.code} value={currency.code}>{currency.name}</option>)}
                 </select>
               </div>
             </div>
@@ -171,7 +189,7 @@ function App() {
                 <div className="result-divider" />
                 <div className="summary-line"><span>{formatCurrency(result.valorOriginal, result.moedaOrigem)}</span><ArrowRight size={16} /><span>{formatCurrency(result.valorConvertido, result.moedaDestino)}</span></div>
                 <dl className="details">
-                  <div><dt>Referência em BRL</dt><dd>{formatCurrency(result.cotacaoBrl, 'BRL')}</dd></div>
+                  <div><dt>1 {currencyName(result.moedaOrigem)} equivale a</dt><dd>{formatCurrency(result.cotacaoConversao, result.moedaDestino)}</dd></div>
                   <div><dt>Data da cotação</dt><dd>{formatDate(result.dataCotacao)}</dd></div>
                   <div><dt>Consultado em</dt><dd>{formatTime(result.consultadoEm)}</dd></div>
                 </dl>
@@ -202,14 +220,14 @@ function App() {
                     <ArrowRight size={15} />
                     <strong>{formatCurrency(conversion.valorConvertido, conversion.moedaDestino)}</strong>
                   </div>
-                  <span className="history-rate">Referência BRL: {formatCurrency(conversion.cotacaoBrl, 'BRL')}</span>
+                    <span className="history-rate">1 {currencyName(conversion.moedaOrigem)} = {formatCurrency(conversion.cotacaoConversao, conversion.moedaDestino)}</span>
                 </article>
               ))}
             </div>
           </section>
         )}
       </section>
-      <footer>Dados consultados pela AwesomeAPI <span>•</span> BRL, USD, EUR e GBP</footer>
+      <footer>Dados consultados pela AwesomeAPI <span>•</span> Real Brasileiro, Euro, Dólar Americano e Libra Esterlina</footer>
     </main>
   )
 }

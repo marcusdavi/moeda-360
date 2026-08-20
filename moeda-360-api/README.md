@@ -24,7 +24,7 @@ Resposta:
 {
   "valorOriginal": 100.00,
   "moedaOrigem": "BRL",
-  "cotacaoBrl": 5.1234,
+  "cotacaoConversao": 0.1952,
   "valorConvertido": 19.52,
   "moedaDestino": "USD",
   "dataCotacao": "2026-08-19",

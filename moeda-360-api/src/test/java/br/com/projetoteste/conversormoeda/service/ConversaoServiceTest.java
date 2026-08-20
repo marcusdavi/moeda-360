@@ -50,6 +50,7 @@ class ConversaoServiceTest {
         assertEquals(new BigDecimal("100.00"), resposta.valorConvertido());
         assertEquals(Moeda.USD, resposta.moedaOrigem());
         assertEquals(Moeda.BRL, resposta.moedaDestino());
+        assertEquals(new BigDecimal("5.000000"), resposta.cotacaoConversao());
     }
 
     @Test
@@ -63,5 +64,6 @@ class ConversaoServiceTest {
         assertEquals(new BigDecimal("8.00"), resposta.valorConvertido());
         assertEquals(Moeda.EUR, resposta.moedaOrigem());
         assertEquals(Moeda.GBP, resposta.moedaDestino());
+        assertEquals(new BigDecimal("0.800000"), resposta.cotacaoConversao());
     }
 }

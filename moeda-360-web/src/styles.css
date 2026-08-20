@@ -25,8 +25,8 @@ h1 em { color: #b55435; font-family: 'Playfair Display', serif; font-weight: 600
 .card-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; }
 .card-heading h2 { max-width: 300px; margin: 7px 0 0; font-size: 19px; line-height: 1.2; letter-spacing: -.6px; }
 .pair-badge { display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px; color: #67675d; background: #f1ede4; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 11px; }
-.currency-selectors { display: inline-flex; align-items: center; gap: 6px; padding: 5px 7px; color: #67675d; background: #f1ede4; border-radius: 4px; }
-.currency-selectors select { border: 0; outline: 0; color: #25251f; background: transparent; font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; cursor: pointer; }
+.currency-selectors { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 5px 7px; color: #67675d; background: #f1ede4; border-radius: 4px; }
+.currency-selectors select { min-width: 0; max-width: 145px; border: 0; outline: 0; color: #25251f; background: transparent; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; cursor: pointer; }
 .swap-button { display: grid; place-items: center; padding: 2px; border: 0; color: #b55435; background: transparent; }
 .swap-button:hover { color: #963e27; }
 .field-label { display: block; margin-bottom: 9px; color: #67675d; font-size: 12px; font-weight: 700; }
@@ -74,7 +74,7 @@ h1 em { color: #b55435; font-family: 'Playfair Display', serif; font-weight: 600
 .history-values { display: flex; align-items: center; gap: 5px; margin-top: 17px; color: #25251f; font-size: 12px; }
 .history-values svg { flex: 0 0 auto; color: #b55435; }
 .history-rate { display: block; margin-top: 12px; color: #96968d; font-family: 'DM Mono', monospace; font-size: 9px; white-space: nowrap; }
-footer { max-width: 1180px; padding: 19px 32px; margin: auto; color: #96968d; font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+footer { max-width: 1180px; padding: 19px 32px; margin: auto; color: #96968d; font-family: 'DM Mono', monospace; font-size: 9px; line-height: 1.5; text-transform: uppercase; letter-spacing: .06em; }
 footer span { margin: 0 8px; color: #b55435; }
 .spin { animation: spin 1s linear infinite; }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
